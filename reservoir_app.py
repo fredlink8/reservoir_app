@@ -63,7 +63,7 @@ FLOOD_CONTROL_LIMIT = 2130.0
 CAP_DEAD = 280.0
 
 TRAIN_STRIDE = 5
-PPO_EPOCHS = 12
+DEFAULT_PPO_EPOCHS = 12
 LR_ACTOR = 2e-4
 LR_CRITIC = 5e-4
 GAMMA = 0.99
@@ -91,6 +91,14 @@ st.sidebar.header("🏋️ Neural Layer Controls")
 
 epochs = st.sidebar.slider(
     "CNN-LSTM Training Epochs",
+    min_value=1,
+    max_value=50,
+    value=5,
+    step=1
+)
+
+ppo_epochs = st.sidebar.slider(
+    "PPO Training Epochs",
     min_value=1,
     max_value=50,
     value=5,
@@ -463,7 +471,8 @@ def optimize_ppo_outflow(
     max_discharge,
     w_store,
     w_dev,
-    w_excess
+    w_excess,
+    ppo_epochs_num
 ):
     set_seeds(42)
 
@@ -487,7 +496,7 @@ def optimize_ppo_outflow(
     actor, critic, opt_actor, opt_critic = build_models()
     train_idx = np.arange(0, len(qin), TRAIN_STRIDE)
 
-    for _ in range(PPO_EPOCHS):
+    for _ in range(ppo_epochs_num):
         states, rewards, values, logps = [], [], [], []
         storage = float(s0_init)
 
@@ -744,7 +753,9 @@ df_future_inputs_source = clean_numeric_columns(
 # Computation pipeline
 # ============================================================
 with st.status("🚀 Computing pipeline calculations...", expanded=True) as status:
-    status.write("Training CNN-LSTM and generating future reservoir variables...")
+    status.write(
+    f"Training CNN-LSTM ({epochs} epochs) and generating future reservoir variables..."
+    )
 
     df_fut = run_cnn_lstm_forecast(
         df_historical_source,
@@ -785,7 +796,9 @@ with st.status("🚀 Computing pipeline calculations...", expanded=True) as stat
 
     s0 = float(last_hist["Water storage (million m^3)"].iloc[-1])
 
-    status.write("Running PPO reservoir operation optimization...")
+    status.write(
+    f"Running PPO reservoir operation optimization ({ppo_epochs} epochs)..."
+    )
 
     q_opt, s_opt = optimize_ppo_outflow(
         df_pred,
@@ -794,7 +807,8 @@ with st.status("🚀 Computing pipeline calculations...", expanded=True) as stat
         max_discharge,
         w_store_slider,
         w_dev_slider,
-        w_excess_slider
+        w_excess_slider,
+        ppo_epochs
     )
 
     df_pred["PPO_Inflow"] = df_pred["Inflow (m^3/s)"]
