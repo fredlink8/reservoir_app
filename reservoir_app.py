@@ -35,8 +35,9 @@ st.set_page_config(layout="wide")
 
 st.title("Reservoir Operation Decision-Support Dashboard")
 st.markdown(
-    "Climate-driven CNN-LSTM prediction and PPO optimization framework with interactive "
-    "hydrograph panels, storage panels, and selectable 4-panel animation."
+    "Climate-driven reservoir prediction and optimization framework with "
+    "interactive hydrograph visualization, storage analysis, and selectable "
+    "4-panel reservoir operation animation for decision support."
 )
 
 
