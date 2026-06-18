@@ -33,9 +33,9 @@ from streamlit.runtime.uploaded_file_manager import UploadedFile
 # ============================================================
 st.set_page_config(layout="wide")
 
-st.title("Advanced Optimized Hydrograph Dashboard Platform")
+st.title("Reservoir Operation Decision-Support Dashboard")
 st.markdown(
-    "Standalone CNN-LSTM + PPO reservoir operation dashboard with "
+    "Climate-driven CNN-LSTM prediction and PPO optimization framework with interactive "
     "hydrograph panels, storage panels, and selectable 4-panel animation."
 )
 
